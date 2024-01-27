@@ -1,3 +1,5 @@
+using FunctionalDdd;
+
 namespace CleanArchitecture.Application.SubcutaneousTests.Reminders.Commands.SetReminder;
 
 [Collection(WebAppFactoryCollection.CollectionName)]
@@ -15,8 +17,8 @@ public class SetReminderValidationTests(WebAppFactory webAppFactory)
         var result = await _mediator.Send(command);
 
         // Assert
-        result.IsError.Should().BeTrue();
-        result.FirstError.Type.Should().Be(ErrorType.Validation);
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().BeOfType<ValidationError>();
     }
 
     [Theory]
@@ -32,7 +34,7 @@ public class SetReminderValidationTests(WebAppFactory webAppFactory)
         var result = await _mediator.Send(command);
 
         // Assert
-        result.IsError.Should().BeTrue();
-        result.FirstError.Type.Should().Be(ErrorType.Validation);
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().BeOfType<ValidationError>();
     }
 }

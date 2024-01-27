@@ -7,6 +7,8 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation" />
     <PackageReference Include="FluentValidation.AspNetCore" />
+    <PackageReference Include="FunctionalDdd.RailwayOrientedProgramming" />
+    <PackageReference Include="FunctionalDdd.FluentValidation" />
   </ItemGroup>
 
 </Project>

@@ -20,7 +20,7 @@ public static class MediatorExtensions
         command ??= ReminderCommandFactory.CreateSetReminderCommand();
         var result = await mediator.Send(command);
 
-        result.IsError.Should().BeFalse();
+        result.IsFailure.Should().BeFalse();
         result.Value.AssertCreatedFrom(command);
 
         return result.Value;

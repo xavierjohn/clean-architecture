@@ -1,3 +1,5 @@
+using FunctionalDdd;
+
 namespace CleanArchitecture.Application.SubcutaneousTests.Reminders.Commands.DeleteReminder;
 
 [Collection(WebAppFactoryCollection.CollectionName)]
@@ -15,8 +17,8 @@ public class DeleteReminderTests(WebAppFactory webAppFactory)
         var result = await _mediator.Send(command);
 
         // Assert
-        result.IsError.Should().BeTrue();
-        result.FirstError.Type.Should().Be(ErrorType.NotFound);
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().BeOfType<NotFoundError>();
     }
 
     [Fact]
@@ -30,8 +32,8 @@ public class DeleteReminderTests(WebAppFactory webAppFactory)
         var result = await _mediator.Send(command);
 
         // Assert
-        result.IsError.Should().BeTrue();
-        result.FirstError.Type.Should().Be(ErrorType.NotFound);
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().BeOfType<NotFoundError>();
     }
 
     [Fact]
@@ -50,8 +52,8 @@ public class DeleteReminderTests(WebAppFactory webAppFactory)
         var result = await _mediator.Send(command);
 
         // Assert
-        result.IsError.Should().BeFalse();
-        result.Value.Should().Be(Result.Success);
+        result.IsFailure.Should().BeFalse();
+        result.Value.Should().Be(default(FunctionalDdd.Unit));
 
         // Assert side effects took place
         var getReminderResult = await _mediator.GetReminderAsync(
@@ -80,10 +82,10 @@ public class DeleteReminderTests(WebAppFactory webAppFactory)
         var secondDeleteReminderResult = await _mediator.Send(command);
 
         // Assert
-        firstDeleteReminderResult.IsError.Should().BeFalse();
+        firstDeleteReminderResult.IsFailure.Should().BeFalse();
 
-        secondDeleteReminderResult.IsError.Should().BeTrue();
-        secondDeleteReminderResult.FirstError.Type.Should().Be(ErrorType.NotFound);
+        secondDeleteReminderResult.IsFailure.Should().BeTrue();
+        secondDeleteReminderResult.Error.Should().BeOfType<NotFoundError>();
 
         // Assert side effects took place
         var getReminderResult = await _mediator.GetReminderAsync(

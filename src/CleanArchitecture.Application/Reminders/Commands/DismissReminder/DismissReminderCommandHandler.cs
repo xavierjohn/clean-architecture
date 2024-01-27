@@ -1,6 +1,6 @@
 using CleanArchitecture.Application.Common.Interfaces;
 
-using ErrorOr;
+using FunctionalDdd;
 
 using MediatR;
 
@@ -8,26 +8,12 @@ namespace CleanArchitecture.Application.Reminders.Commands.DismissReminder;
 
 public class DismissReminderCommandHandler(
     IUsersRepository _usersRepository)
-        : IRequestHandler<DismissReminderCommand, ErrorOr<Success>>
+        : IRequestHandler<DismissReminderCommand, Result<FunctionalDdd.Unit>>
 {
-    public async Task<ErrorOr<Success>> Handle(DismissReminderCommand request, CancellationToken cancellationToken)
-    {
-        var user = await _usersRepository.GetByIdAsync(request.UserId, cancellationToken);
-
-        if (user is null)
-        {
-            return Error.NotFound(description: "Reminder not found");
-        }
-
-        var dismissReminderResult = user.DismissReminder(request.ReminderId);
-
-        if (dismissReminderResult.IsError)
-        {
-            return dismissReminderResult.Errors;
-        }
-
-        await _usersRepository.UpdateAsync(user, cancellationToken);
-
-        return Result.Success;
-    }
+    public async Task<Result<FunctionalDdd.Unit>> Handle(DismissReminderCommand request, CancellationToken cancellationToken) =>
+        await _usersRepository.GetByIdAsync(request.UserId, cancellationToken)
+            .ToResultAsync(Error.NotFound("Reminder not found"))
+            .BindAsync(user => user.DismissReminder(request.ReminderId).Map(r => user))
+            .TapAsync(user => _usersRepository.UpdateAsync(user, cancellationToken))
+            .MapAsync(r => default(FunctionalDdd.Unit));
 }

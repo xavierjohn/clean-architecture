@@ -1,3 +1,5 @@
+using FunctionalDdd;
+
 namespace CleanArchitecture.Application.SubcutaneousTests.Subscriptions.Commands.CancelSubscription;
 
 [Collection(WebAppFactoryCollection.CollectionName)]
@@ -17,8 +19,8 @@ public class CancelSubscriptionTests(WebAppFactory webAppFactory)
         var result = await _mediator.Send(command);
 
         // Assert
-        result.IsError.Should().BeFalse();
-        result.Value.Should().Be(Result.Success);
+        result.IsFailure.Should().BeFalse();
+        result.Value.Should().Be(default(FunctionalDdd.Unit));
 
         // Assert side effects took place
         var getSubscriptionResult = await _mediator.GetSubscriptionAsync();
@@ -37,8 +39,8 @@ public class CancelSubscriptionTests(WebAppFactory webAppFactory)
         var result = await _mediator.Send(command);
 
         // Assert
-        result.IsError.Should().BeTrue();
-        result.FirstError.Type.Should().Be(ErrorType.NotFound);
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().BeOfType<NotFoundError>();
     }
 
     [Fact]
@@ -55,8 +57,8 @@ public class CancelSubscriptionTests(WebAppFactory webAppFactory)
         var result = await _mediator.Send(command);
 
         // Assert
-        result.IsError.Should().BeFalse();
-        result.Value.Should().Be(Result.Success);
+        result.IsFailure.Should().BeFalse();
+        result.Value.Should().Be(default(FunctionalDdd.Unit));
 
         // Assert side effects took place
         var getSubscriptionResult = await _mediator.GetSubscriptionAsync();

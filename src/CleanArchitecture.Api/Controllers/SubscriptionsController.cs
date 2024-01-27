@@ -4,6 +4,8 @@ using CleanArchitecture.Application.Subscriptions.Common;
 using CleanArchitecture.Application.Subscriptions.Queries.GetSubscription;
 using CleanArchitecture.Contracts.Subscriptions;
 
+using FunctionalDdd;
+
 using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
@@ -44,15 +46,14 @@ public class SubscriptionsController(IMediator _mediator) : ApiController
     }
 
     [HttpDelete("{subscriptionId:guid}")]
-    public async Task<IActionResult> DeleteSubscription(Guid userId, Guid subscriptionId)
+    public async Task<ActionResult<FunctionalDdd.Unit>> DeleteSubscription(Guid userId, Guid subscriptionId)
     {
         var command = new CancelSubscriptionCommand(userId, subscriptionId);
 
-        var result = await _mediator.Send(command);
-
-        return result.Match(
+        return await _mediator.Send(command)
+            .FinallyAsync(
             _ => NoContent(),
-            Problem);
+            err => err.ToErrorActionResult<FunctionalDdd.Unit>(this));
     }
 
     [HttpGet]

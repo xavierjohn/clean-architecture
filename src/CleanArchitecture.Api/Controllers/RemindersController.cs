@@ -6,6 +6,8 @@ using CleanArchitecture.Application.Reminders.Queries.ListReminders;
 using CleanArchitecture.Contracts.Reminders;
 using CleanArchitecture.Domain.Reminders;
 
+using FunctionalDdd;
+
 using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
@@ -16,42 +18,39 @@ namespace CleanArchitecture.Api.Controllers;
 public class RemindersController(ISender _mediator) : ApiController
 {
     [HttpPost]
-    public async Task<IActionResult> CreateReminder(Guid userId, Guid subscriptionId, CreateReminderRequest request)
+    public async Task<ActionResult<FunctionalDdd.Unit>> CreateReminder(Guid userId, Guid subscriptionId, CreateReminderRequest request)
     {
         var command = new SetReminderCommand(userId, subscriptionId, request.Text, request.DateTime.UtcDateTime);
 
-        var result = await _mediator.Send(command);
-
-        return result.Match(
-            reminder => CreatedAtAction(
+        return await _mediator.Send(command)
+            .FinallyAsync(
+             reminder => CreatedAtAction(
                 actionName: nameof(GetReminder),
                 routeValues: new { UserId = userId, SubscriptionId = subscriptionId, ReminderId = reminder.Id },
                 value: ToDto(reminder)),
-            Problem);
+             err => err.ToErrorActionResult<FunctionalDdd.Unit>(this));
     }
 
     [HttpPost("{reminderId:guid}/dismiss")]
-    public async Task<IActionResult> DismissReminder(Guid userId, Guid subscriptionId, Guid reminderId)
+    public async Task<ActionResult<FunctionalDdd.Unit>> DismissReminder(Guid userId, Guid subscriptionId, Guid reminderId)
     {
         var command = new DismissReminderCommand(userId, subscriptionId, reminderId);
 
-        var result = await _mediator.Send(command);
-
-        return result.Match(
+        return await _mediator.Send(command)
+            .FinallyAsync(
             _ => NoContent(),
-            Problem);
+            err => err.ToErrorActionResult<FunctionalDdd.Unit>(this));
     }
 
     [HttpDelete("{reminderId:guid}")]
-    public async Task<IActionResult> DeleteReminder(Guid userId, Guid subscriptionId, Guid reminderId)
+    public async Task<ActionResult<FunctionalDdd.Unit>> DeleteReminder(Guid userId, Guid subscriptionId, Guid reminderId)
     {
         var command = new DeleteReminderCommand(userId, subscriptionId, reminderId);
 
-        var result = await _mediator.Send(command);
-
-        return result.Match(
+        return await _mediator.Send(command)
+            .FinallyAsync(
             _ => NoContent(),
-            Problem);
+            err => err.ToErrorActionResult<FunctionalDdd.Unit>(this));
     }
 
     [HttpGet("{reminderId:guid}")]
