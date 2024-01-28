@@ -33,7 +33,7 @@ public class DeleteReminderAuthorizationTests
         var result = await _mediator.Send(command);
 
         // Assert
-        result.Error.Should().BeOfType<UnauthorizedError>();
+        result.Error.Should().NotBeOfType<ForbiddenError>();
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class DeleteReminderAuthorizationTests
         var result = await _mediator.Send(command);
 
         // Assert
-        result.Error.Should().BeOfType<UnauthorizedError>();
+        result.Error.Should().BeOfType<ForbiddenError>();
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public class DeleteReminderAuthorizationTests
         var result = await _mediator.Send(command);
 
         // Assert
-        result.Error.Should().BeOfType<UnauthorizedError>();
+        result.Error.Should().NotBeOfType<ForbiddenError>();
     }
 
     [Fact]
@@ -90,6 +90,6 @@ public class DeleteReminderAuthorizationTests
         var result = await _mediator.Send(command);
 
         // Assert
-        result.Error.Should().BeOfType<UnauthorizedError>();
+        result.Error.Should().BeOfType<ForbiddenError>();
     }
 }

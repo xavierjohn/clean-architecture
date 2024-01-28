@@ -1,5 +1,3 @@
-using FunctionalDdd;
-
 namespace CleanArchitecture.Application.SubcutaneousTests.Reminders.Commands.DismissReminder;
 
 [Collection(WebAppFactoryCollection.CollectionName)]
@@ -46,7 +44,7 @@ public class DismissReminderTests(WebAppFactory webAppFactory)
                 subscriptionId: subscription.Id,
                 reminderId: reminder.Id));
 
-        getReminderResult.IsError.Should().BeFalse();
+        getReminderResult.IsFailure.Should().BeFalse();
         getReminderResult.Value.IsDismissed.Should().BeTrue();
     }
 
@@ -78,7 +76,7 @@ public class DismissReminderTests(WebAppFactory webAppFactory)
                 subscriptionId: subscription.Id,
                 reminderId: reminder.Id));
 
-        getReminderResult.IsError.Should().BeFalse();
+        getReminderResult.IsFailure.Should().BeFalse();
         getReminderResult.Value.IsDismissed.Should().BeTrue();
     }
 }

@@ -1,5 +1,3 @@
-using FunctionalDdd;
-
 namespace CleanArchitecture.Application.SubcutaneousTests.Reminders.Commands.DeleteReminder;
 
 [Collection(WebAppFactoryCollection.CollectionName)]
@@ -61,8 +59,8 @@ public class DeleteReminderTests(WebAppFactory webAppFactory)
                 subscriptionId: subscription.Id,
                 reminderId: reminder.Id));
 
-        getReminderResult.IsError.Should().BeTrue();
-        getReminderResult.FirstError.Type.Should().Be(ErrorType.NotFound);
+        getReminderResult.IsFailure.Should().BeTrue();
+        getReminderResult.Error.Should().BeOfType<NotFoundError>();
     }
 
     [Fact]
@@ -93,7 +91,7 @@ public class DeleteReminderTests(WebAppFactory webAppFactory)
                 subscriptionId: subscription.Id,
                 reminderId: reminder.Id));
 
-        getReminderResult.IsError.Should().BeTrue();
-        getReminderResult.FirstError.Type.Should().Be(ErrorType.NotFound);
+        getReminderResult.IsFailure.Should().BeTrue();
+        getReminderResult.Error.Should().BeOfType<NotFoundError>();
     }
 }

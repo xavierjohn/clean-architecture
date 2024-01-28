@@ -62,8 +62,11 @@ public class ValidationBehaviorTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Code.Should().Be("foo");
-        result.Error.Message.Should().Be("bad foo");
+        result.Error.Should().BeOfType<ValidationError>();
+        var validationError = (ValidationError)result.Error;
+        validationError.Errors.Should().HaveCount(1);
+        validationError.Errors[0].FieldName.Should().Be("foo");
+        validationError.Errors[0].Message.Should().Be("bad foo");
     }
 
     [Fact]

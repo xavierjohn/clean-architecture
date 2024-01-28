@@ -25,8 +25,8 @@ public class CancelSubscriptionTests(WebAppFactory webAppFactory)
         // Assert side effects took place
         var getSubscriptionResult = await _mediator.GetSubscriptionAsync();
 
-        getSubscriptionResult.IsError.Should().BeTrue();
-        getSubscriptionResult.FirstError.Type.Should().Be(ErrorType.NotFound);
+        getSubscriptionResult.IsFailure.Should().BeTrue();
+        getSubscriptionResult.Error.Should().BeOfType<NotFoundError>();
     }
 
     [Fact]
@@ -63,12 +63,12 @@ public class CancelSubscriptionTests(WebAppFactory webAppFactory)
         // Assert side effects took place
         var getSubscriptionResult = await _mediator.GetSubscriptionAsync();
 
-        getSubscriptionResult.IsError.Should().BeTrue();
-        getSubscriptionResult.FirstError.Type.Should().Be(ErrorType.NotFound);
+        getSubscriptionResult.IsFailure.Should().BeTrue();
+        getSubscriptionResult.Error.Should().BeOfType<NotFoundError>();
 
         var listRemindersResult = await _mediator.ListRemindersAsync();
 
-        listRemindersResult.IsError.Should().BeFalse();
+        listRemindersResult.IsFailure.Should().BeFalse();
         listRemindersResult.Value.Should().BeEmpty();
     }
 }

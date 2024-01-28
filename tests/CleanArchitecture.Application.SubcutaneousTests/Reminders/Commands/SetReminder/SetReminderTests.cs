@@ -44,7 +44,7 @@ public class SetReminderTests(WebAppFactory webAppFactory)
                 subscriptionId: subscription.Id,
                 reminderId: result.Value.Id));
 
-        getReminderResult.IsError.Should().BeFalse();
+        getReminderResult.IsFailure.Should().BeFalse();
         getReminderResult.Value.Should().BeEquivalentTo(result.Value);
     }
 
@@ -76,7 +76,7 @@ public class SetReminderTests(WebAppFactory webAppFactory)
         var listRemindersResult = await _mediator.ListRemindersAsync(
             ReminderQueryFactory.CreateListRemindersQuery(subscriptionId: subscription.Id));
 
-        listRemindersResult.IsError.Should().BeFalse();
+        listRemindersResult.IsFailure.Should().BeFalse();
         listRemindersResult.Value.Should().HaveCount(subscriptionType.GetMaxDailyReminders());
 
         foreach (var succeededCommand in succeededCommands)
@@ -86,7 +86,7 @@ public class SetReminderTests(WebAppFactory webAppFactory)
                     subscriptionId: subscription.Id,
                     reminderId: succeededCommand.Value.Id));
 
-            result.IsError.Should().BeFalse();
+            result.IsFailure.Should().BeFalse();
             result.Value.Should().BeEquivalentTo(succeededCommand.Value);
         }
     }

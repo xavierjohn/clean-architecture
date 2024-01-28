@@ -4,10 +4,9 @@ using CleanArchitecture.Application.Subscriptions.Common;
 using CleanArchitecture.Application.Subscriptions.Queries.GetSubscription;
 using CleanArchitecture.Contracts.Subscriptions;
 
-using FunctionalDdd;
-
 using MediatR;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using DomainSubscriptionType = CleanArchitecture.Domain.Users.SubscriptionType;
@@ -15,11 +14,13 @@ using SubscriptionType = CleanArchitecture.Contracts.Common.SubscriptionType;
 
 namespace CleanArchitecture.Api.Controllers;
 
+[ApiController]
+[Authorize]
 [Route("users/{userId:guid}/subscriptions")]
-public class SubscriptionsController(IMediator _mediator) : ApiController
+public class SubscriptionsController(IMediator _mediator) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> CreateSubscription(Guid userId, CreateSubscriptionRequest request)
+    public async Task<ActionResult<SubscriptionResult>> CreateSubscription(Guid userId, CreateSubscriptionRequest request)
     {
         if (!DomainSubscriptionType.TryFromName(request.SubscriptionType.ToString(), out var subscriptionType))
         {
@@ -35,14 +36,13 @@ public class SubscriptionsController(IMediator _mediator) : ApiController
             request.Email,
             subscriptionType);
 
-        var result = await _mediator.Send(command);
-
-        return result.Match(
-            subscription => CreatedAtAction(
+        return await _mediator.Send(command)
+                        .FinallyAsync(
+             subscription => CreatedAtAction(
                 actionName: nameof(GetSubscription),
                 routeValues: new { UserId = userId },
                 value: ToDto(subscription)),
-            Problem);
+             err => err.ToErrorActionResult<SubscriptionResult>(this));
     }
 
     [HttpDelete("{subscriptionId:guid}")]
@@ -57,15 +57,13 @@ public class SubscriptionsController(IMediator _mediator) : ApiController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetSubscription(Guid userId)
+    public async Task<ActionResult<SubscriptionResponse>> GetSubscription(Guid userId)
     {
         var query = new GetSubscriptionQuery(userId);
 
-        var result = await _mediator.Send(query);
-
-        return result.Match(
-            user => Ok(ToDto(user)),
-            Problem);
+        return await _mediator.Send(query)
+            .MapAsync(ToDto)
+            .ToOkActionResultAsync(this);
     }
 
     private static SubscriptionType ToDto(DomainSubscriptionType subscriptionType) =>

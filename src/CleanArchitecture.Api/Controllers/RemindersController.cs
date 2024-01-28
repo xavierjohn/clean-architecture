@@ -6,16 +6,16 @@ using CleanArchitecture.Application.Reminders.Queries.ListReminders;
 using CleanArchitecture.Contracts.Reminders;
 using CleanArchitecture.Domain.Reminders;
 
-using FunctionalDdd;
-
 using MediatR;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CleanArchitecture.Api.Controllers;
-
+[ApiController]
+[Authorize]
 [Route("users/{userId:guid}/subscriptions/{subscriptionId:guid}/reminders")]
-public class RemindersController(ISender _mediator) : ApiController
+public class RemindersController(ISender _mediator) : ControllerBase
 {
     [HttpPost]
     public async Task<ActionResult<FunctionalDdd.Unit>> CreateReminder(Guid userId, Guid subscriptionId, CreateReminderRequest request)
@@ -54,27 +54,23 @@ public class RemindersController(ISender _mediator) : ApiController
     }
 
     [HttpGet("{reminderId:guid}")]
-    public async Task<IActionResult> GetReminder(Guid userId, Guid subscriptionId, Guid reminderId)
+    public async Task<ActionResult<ReminderResponse>> GetReminder(Guid userId, Guid subscriptionId, Guid reminderId)
     {
         var query = new GetReminderQuery(userId, subscriptionId, reminderId);
 
-        var result = await _mediator.Send(query);
-
-        return result.Match(
-            reminder => Ok(ToDto(reminder)),
-            Problem);
+        return await _mediator.Send(query)
+            .MapAsync(ToDto)
+            .ToOkActionResultAsync(this);
     }
 
     [HttpGet]
-    public async Task<IActionResult> ListReminders(Guid userId, Guid subscriptionId)
+    public async Task<ActionResult<List<ReminderResponse>>> ListReminders(Guid userId, Guid subscriptionId)
     {
         var query = new ListRemindersQuery(userId, subscriptionId);
 
-        var result = await _mediator.Send(query);
-
-        return result.Match(
-            reminders => Ok(reminders.ConvertAll(ToDto)),
-            Problem);
+        return await _mediator.Send(query)
+            .MapAsync(reminders => reminders.ConvertAll(ToDto))
+            .ToOkActionResultAsync(this);
     }
 
     private ReminderResponse ToDto(Reminder reminder) =>

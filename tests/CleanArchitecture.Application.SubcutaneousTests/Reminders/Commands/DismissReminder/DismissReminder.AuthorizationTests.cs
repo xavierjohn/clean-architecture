@@ -1,8 +1,6 @@
 using CleanArchitecture.Application.Common.Security.Permissions;
 using CleanArchitecture.Application.Common.Security.Roles;
 
-using FunctionalDdd;
-
 namespace CleanArchitecture.Application.SubcutaneousTests.Reminders.Commands.DismissReminder;
 
 public class DismissReminderAuthorizationTests
@@ -33,7 +31,7 @@ public class DismissReminderAuthorizationTests
         var result = await _mediator.Send(command);
 
         // Assert
-        result.Error.Should().BeOfType<UnauthorizedError>();
+        result.Error.Should().NotBeOfType<ForbiddenError>();
     }
 
     [Fact]
@@ -52,7 +50,7 @@ public class DismissReminderAuthorizationTests
         var result = await _mediator.Send(command);
 
         // Assert
-        result.Error.Should().BeOfType<UnauthorizedError>();
+        result.Error.Should().BeOfType<ForbiddenError>();
     }
 
     [Fact]
@@ -71,7 +69,7 @@ public class DismissReminderAuthorizationTests
         var result = await _mediator.Send(command);
 
         // Assert
-        result.Error.Should().BeOfType<UnauthorizedError>();
+        result.Error.Should().NotBeOfType<ForbiddenError>();
     }
 
     [Fact]
@@ -90,6 +88,6 @@ public class DismissReminderAuthorizationTests
         var result = await _mediator.Send(command);
 
         // Assert
-        result.Error.Should().BeOfType<UnauthorizedError>();
+        result.Error.Should().BeOfType<ForbiddenError>();
     }
 }

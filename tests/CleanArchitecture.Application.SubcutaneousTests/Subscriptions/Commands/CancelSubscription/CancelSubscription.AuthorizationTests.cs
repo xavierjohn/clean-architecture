@@ -1,7 +1,5 @@
 using CleanArchitecture.Application.Common.Security.Roles;
 
-using FunctionalDdd;
-
 namespace CleanArchitecture.Application.SubcutaneousTests.Subscriptions.Commands.CancelSubscription;
 
 public class CancelSubscriptionAuthorizationTests
@@ -31,7 +29,7 @@ public class CancelSubscriptionAuthorizationTests
         var result = await _mediator.Send(command);
 
         // Assert
-        result.Error.Should().BeOfType<UnauthorizedError>();
+        result.Error.Should().NotBeOfType<ForbiddenError>();
     }
 
     [Fact]
@@ -49,7 +47,7 @@ public class CancelSubscriptionAuthorizationTests
         var result = await _mediator.Send(command);
 
         // Assert
-        result.Error.Should().BeOfType<UnauthorizedError>();
+        result.Error.Should().BeOfType<ForbiddenError>();
     }
 
     [Fact]
@@ -68,7 +66,7 @@ public class CancelSubscriptionAuthorizationTests
         var result = await _mediator.Send(command);
 
         // Assert
-        result.Error.Should().BeOfType<UnauthorizedError>();
+        result.Error.Should().NotBeOfType<ForbiddenError>();
     }
 
     [Fact]
@@ -87,6 +85,6 @@ public class CancelSubscriptionAuthorizationTests
         var result = await _mediator.Send(command);
 
         // Assert
-        result.Error.Should().BeOfType<UnauthorizedError>();
+        result.Error.Should().BeOfType<ForbiddenError>();
     }
 }

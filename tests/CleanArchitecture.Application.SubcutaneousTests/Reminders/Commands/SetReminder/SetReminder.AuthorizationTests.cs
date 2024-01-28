@@ -1,8 +1,6 @@
 using CleanArchitecture.Application.Common.Security.Permissions;
 using CleanArchitecture.Application.Common.Security.Roles;
 
-using FunctionalDdd;
-
 namespace CleanArchitecture.Application.SubcutaneousTests.Reminders.Commands.SetReminder;
 
 public class SetReminderAuthorizationTests
@@ -34,7 +32,7 @@ public class SetReminderAuthorizationTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Should().BeOfType<UnauthorizedError>();
+        result.Error.Should().BeOfType<ForbiddenError>();
     }
 
     [Fact]
@@ -53,7 +51,7 @@ public class SetReminderAuthorizationTests
         var result = await _mediator.Send(command);
 
         // Assert
-        result.Error.Should().BeOfType<UnauthorizedError>();
+        result.Error.Should().BeOfType<ForbiddenError>();
     }
 
     [Fact]
@@ -72,7 +70,7 @@ public class SetReminderAuthorizationTests
         var result = await _mediator.Send(command);
 
         // Assert
-        result.Error.Should().BeOfType<UnauthorizedError>();
+        result.Error.Should().BeOfType<ForbiddenError>();
     }
 
     [Fact]
@@ -91,6 +89,6 @@ public class SetReminderAuthorizationTests
         var result = await _mediator.Send(command);
 
         // Assert
-        result.Error.Should().BeOfType<UnauthorizedError>();
+        result.Error.Should().BeOfType<ForbiddenError>();
     }
 }

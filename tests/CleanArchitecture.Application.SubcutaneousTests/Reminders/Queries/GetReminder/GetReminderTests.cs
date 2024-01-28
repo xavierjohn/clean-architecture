@@ -21,7 +21,7 @@ public class GetReminderTests(WebAppFactory webAppFactory)
         var result = await _mediator.Send(query);
 
         // Assert
-        result.IsError.Should().BeFalse();
+        result.IsFailure.Should().BeFalse();
         result.Value.Should().BeEquivalentTo(reminder);
     }
 
@@ -35,9 +35,10 @@ public class GetReminderTests(WebAppFactory webAppFactory)
         var result = await _mediator.Send(query);
 
         // Assert
-        result.IsError.Should().BeTrue();
-        result.FirstError.Type.Should().Be(ErrorType.NotFound);
-        result.FirstError.Description.Should().Contain("Reminder");
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().BeEquivalentTo(Error.NotFound("Reminder"));
+
+        // result.FirstError.Description.Should().Contain("Reminder");
     }
 
     [Fact]
@@ -52,8 +53,7 @@ public class GetReminderTests(WebAppFactory webAppFactory)
         var result = await _mediator.Send(query);
 
         // Assert
-        result.IsError.Should().BeTrue();
-        result.FirstError.Type.Should().Be(ErrorType.NotFound);
-        result.FirstError.Description.Should().Contain("Reminder");
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(Error.NotFound("Reminder"));
     }
 }
