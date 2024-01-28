@@ -6,10 +6,7 @@ public static class DependencyInjection
     {
         services.AddControllers();
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen(options =>
-        {
-            options.CustomSchemaIds(type => type.ToString());
-        });
+        services.AddSwaggerGen();
         services.AddProblemDetails();
 
         return services;

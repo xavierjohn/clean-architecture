@@ -8,6 +8,7 @@ using MediatR;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 using DomainSubscriptionType = CleanArchitecture.Domain.Users.SubscriptionType;
 using SubscriptionType = CleanArchitecture.Contracts.Common.SubscriptionType;
@@ -20,7 +21,7 @@ namespace CleanArchitecture.Api.Controllers;
 public class SubscriptionsController(IMediator _mediator) : ControllerBase
 {
     [HttpPost]
-    public async Task<ActionResult<SubscriptionResult>> CreateSubscription(Guid userId, CreateSubscriptionRequest request)
+    public async Task<IActionResult> CreateSubscription(Guid userId, CreateSubscriptionRequest request)
     {
         if (!DomainSubscriptionType.TryFromName(request.SubscriptionType.ToString(), out var subscriptionType))
         {
@@ -36,13 +37,15 @@ public class SubscriptionsController(IMediator _mediator) : ControllerBase
             request.Email,
             subscriptionType);
 
-        return await _mediator.Send(command)
+        IConvertToActionResult actionResult = await _mediator.Send(command)
                         .FinallyAsync(
              subscription => CreatedAtAction(
                 actionName: nameof(GetSubscription),
                 routeValues: new { UserId = userId },
                 value: ToDto(subscription)),
              err => err.ToErrorActionResult<SubscriptionResult>(this));
+
+        return actionResult.Convert();
     }
 
     [HttpDelete("{subscriptionId:guid}")]
