@@ -12,9 +12,9 @@ using DomainSubscriptionType = CleanArchitecture.Domain.Users.SubscriptionType;
 
 namespace CleanArchitecture.Api.Controllers;
 
-[Route("tokens")]
 [AllowAnonymous]
 [ApiController]
+[Route("tokens")]
 public class TokensController(ISender _mediator) : ControllerBase
 {
     [HttpPost("generate")]

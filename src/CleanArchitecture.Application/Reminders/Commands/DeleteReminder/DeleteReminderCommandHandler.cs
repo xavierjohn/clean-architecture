@@ -1,7 +1,5 @@
 using CleanArchitecture.Application.Common.Interfaces;
 
-using FunctionalDdd;
-
 using MediatR;
 
 namespace CleanArchitecture.Application.Reminders.Commands.DeleteReminder;
@@ -17,5 +15,10 @@ public class DeleteReminderCommandHandler(
                 _usersRepository.GetByIdAsync(request.UserId, cancellationToken)
                             .ToResultAsync(Error.NotFound("User not found"))
                             .MapAsync(user => (user, reminder)))
-            .BindAsync((user, reminder) => user.DeleteReminder(reminder));
+            .BindAsync((user, reminder) => user.DeleteReminder(reminder).Map(_ => user))
+            .BindAsync(user =>
+            {
+                _usersRepository.UpdateAsync(user, cancellationToken);
+                return Result.Success();
+            });
 }

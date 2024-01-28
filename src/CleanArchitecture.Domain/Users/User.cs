@@ -61,7 +61,7 @@ public class User : Entity
 
         _domainEvents.Add(new ReminderSetEvent(reminder));
 
-        return Result.Success(default(Unit));
+        return Result.Success();
     }
 
     public Result<Unit> DismissReminder(Guid reminderId)
@@ -85,7 +85,7 @@ public class User : Entity
 
         _domainEvents.Add(new ReminderDismissedEvent(reminderId));
 
-        return Result.Success(default(Unit));
+        return Result.Success();
     }
 
     public Result<Unit> CancelSubscription(Guid subscriptionId)
@@ -99,7 +99,7 @@ public class User : Entity
 
         _domainEvents.Add(new SubscriptionCanceledEvent(this, subscriptionId));
 
-        return Result.Success(default(Unit));
+        return Result.Success();
     }
 
     public Result<Unit> DeleteReminder(Reminder reminder)
@@ -120,7 +120,7 @@ public class User : Entity
 
         _domainEvents.Add(new ReminderDeletedEvent(reminder.Id));
 
-        return Result.Success(default(Unit));
+        return Result.Success();
     }
 
     public void DeleteAllReminders()

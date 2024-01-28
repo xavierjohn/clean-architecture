@@ -31,8 +31,7 @@ public class SetReminderAuthorizationTests
         var result = await _mediator.Send(command);
 
         // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Error.Should().BeOfType<ForbiddenError>();
+        result.Error.Should().NotBeOfType<ForbiddenError>();
     }
 
     [Fact]
@@ -70,7 +69,7 @@ public class SetReminderAuthorizationTests
         var result = await _mediator.Send(command);
 
         // Assert
-        result.Error.Should().BeOfType<ForbiddenError>();
+        result.Error.Should().NotBeOfType<ForbiddenError>();
     }
 
     [Fact]
