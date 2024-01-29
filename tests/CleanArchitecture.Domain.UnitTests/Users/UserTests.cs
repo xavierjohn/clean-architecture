@@ -24,7 +24,7 @@ public class UserTests
         var allButLastSetReminderResults = setReminderResults[..^1];
 
         allButLastSetReminderResults.Should().AllSatisfy(
-            setReminderResult => setReminderResult.Value.Should().Be(default(FunctionalDdd.Unit)));
+            setReminderResult => setReminderResult.Value.Should().Be(default(Unit)));
 
         // Assert settings last reminder returned conflict
         var lastReminder = setReminderResults.Last();

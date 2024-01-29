@@ -36,9 +36,7 @@ public class GetReminderTests(WebAppFactory webAppFactory)
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Should().BeEquivalentTo(Error.NotFound("Reminder"));
-
-        // result.FirstError.Description.Should().Contain("Reminder");
+        result.Error.Should().Be(Error.NotFound("Reminder"));
     }
 
     [Fact]

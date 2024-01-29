@@ -1,5 +1,3 @@
-using FunctionalDdd;
-
 namespace CleanArchitecture.Application.SubcutaneousTests.Subscriptions.Commands.CancelSubscription;
 
 [Collection(WebAppFactoryCollection.CollectionName)]

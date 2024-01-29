@@ -1,7 +1,5 @@
 using CleanArchitecture.Domain.Users;
 
-using FunctionalDdd;
-
 namespace CleanArchitecture.Application.SubcutaneousTests.Reminders.Commands.SetReminder;
 
 [Collection(WebAppFactoryCollection.CollectionName)]

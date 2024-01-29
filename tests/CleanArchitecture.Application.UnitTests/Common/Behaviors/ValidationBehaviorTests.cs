@@ -5,8 +5,6 @@ using CleanArchitecture.Domain.Reminders;
 using FluentValidation;
 using FluentValidation.Results;
 
-using FunctionalDdd;
-
 using MediatR;
 
 namespace CleanArchitecture.Application.UnitTests.Common.Behaviors;

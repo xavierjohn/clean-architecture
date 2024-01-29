@@ -23,7 +23,7 @@ public class ValidationBehavior<TRequest, TResponse>(IValidator<TRequest>? valid
             return await next();
         }
 
-        FluentValidation.Results.ValidationResult validationResult = await _validator.ValidateAsync(request, cancellationToken);
+        var validationResult = await _validator.ValidateAsync(request, cancellationToken);
 
         if (validationResult.IsValid)
         {

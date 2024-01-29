@@ -14,6 +14,9 @@ public class DismissReminderCommandHandler(
         await _usersRepository.GetByIdAsync(request.UserId, cancellationToken)
             .ToResultAsync(Error.NotFound("Reminder not found"))
             .BindAsync(user => user.DismissReminder(request.ReminderId).Map(r => user))
-            .TapAsync(user => _usersRepository.UpdateAsync(user, cancellationToken))
-            .MapAsync(r => default(FunctionalDdd.Unit));
+            .BindAsync(user =>
+            {
+                _usersRepository.UpdateAsync(user, cancellationToken);
+                return Result.Success();
+            });
 }
