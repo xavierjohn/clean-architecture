@@ -17,7 +17,6 @@ public static class DependencyInjection
             options.AddOpenBehavior(typeof(AuthorizationBehavior<,>));
         });
 
-        services.AddValidatorsFromAssemblyContaining(typeof(DependencyInjection));
         return services;
     }
 }
