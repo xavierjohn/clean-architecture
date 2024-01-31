@@ -52,7 +52,7 @@ public class SetReminderTests(WebAppFactory webAppFactory)
     {
         // Arrange
         var subscription = await _mediator.CreateSubscriptionAsync(
-            SubscriptionCommandFactory.CreateCreateSubscriptionCommand(subscriptionType: subscriptionType));
+            SubscriptionCommandFactory.CreateCreateSubscriptionCommand(subscriptionType: subscriptionType).Value);
 
         var commands = Enumerable.Range(0, subscriptionType.GetMaxDailyReminders() + 1)
             .Select(_ => ReminderCommandFactory.CreateSetReminderCommand(subscriptionId: subscription.Id).Value)
