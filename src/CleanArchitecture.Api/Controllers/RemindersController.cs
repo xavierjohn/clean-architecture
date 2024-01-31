@@ -1,3 +1,4 @@
+using CleanArchitecture.Application.Common.Interfaces;
 using CleanArchitecture.Application.Reminders.Commands.DeleteReminder;
 using CleanArchitecture.Application.Reminders.Commands.DismissReminder;
 using CleanArchitecture.Application.Reminders.Commands.SetReminder;
@@ -10,17 +11,18 @@ using MediatR;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using Unit = FunctionalDdd.Unit;
 
 namespace CleanArchitecture.Api.Controllers;
 [ApiController]
 [Authorize]
 [Route("users/{userId:guid}/subscriptions/{subscriptionId:guid}/reminders")]
-public class RemindersController(ISender _mediator) : ControllerBase
+public class RemindersController(ISender _mediator, IDateTimeProvider _dateTimeProvider) : ControllerBase
 {
     [HttpPost]
     public async Task<ActionResult<Unit>> CreateReminder(Guid userId, Guid subscriptionId, CreateReminderRequest request) =>
-        await new SetReminderCommand(userId, subscriptionId, request.Text, request.DateTime.UtcDateTime).ToResult()
+        await SetReminderCommand.TryCreate(userId, subscriptionId, request.Text, request.DateTime.UtcDateTime, _dateTimeProvider)
             .BindAsync(command => _mediator.Send(command))
             .FinallyAsync(
              reminder => CreatedAtAction(

@@ -11,7 +11,7 @@ public class SetReminderTests(WebAppFactory webAppFactory)
     public async Task SetReminder_WhenSubscriptionDoesNotExists_ShouldReturnNotFound()
     {
         // Arrange
-        var command = ReminderCommandFactory.CreateSetReminderCommand();
+        var command = ReminderCommandFactory.CreateSetReminderCommand().Value;
 
         // Act
         var result = await _mediator.Send(command);
@@ -27,7 +27,7 @@ public class SetReminderTests(WebAppFactory webAppFactory)
         // Arrange
         var subscription = await _mediator.CreateSubscriptionAsync();
 
-        var command = ReminderCommandFactory.CreateSetReminderCommand(subscriptionId: subscription.Id);
+        var command = ReminderCommandFactory.CreateSetReminderCommand(subscriptionId: subscription.Id).Value;
 
         // Act
         var result = await _mediator.Send(command);
@@ -55,7 +55,7 @@ public class SetReminderTests(WebAppFactory webAppFactory)
             SubscriptionCommandFactory.CreateCreateSubscriptionCommand(subscriptionType: subscriptionType));
 
         var commands = Enumerable.Range(0, subscriptionType.GetMaxDailyReminders() + 1)
-            .Select(_ => ReminderCommandFactory.CreateSetReminderCommand(subscriptionId: subscription.Id))
+            .Select(_ => ReminderCommandFactory.CreateSetReminderCommand(subscriptionId: subscription.Id).Value)
             .ToList();
 
         // Act
