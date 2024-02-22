@@ -1,4 +1,3 @@
-using CleanArchitecture.Domain.Common;
 using CleanArchitecture.Domain.Reminders;
 using CleanArchitecture.Domain.Users;
 using CleanArchitecture.Infrastructure.Common.Middleware;
@@ -18,18 +17,26 @@ public class AppDbContext(DbContextOptions options, IHttpContextAccessor _httpCo
 
     public async override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        var domainEvents = ChangeTracker.Entries<Entity>()
-           .SelectMany(entry => entry.Entity.PopDomainEvents())
+        var domainEvents = ChangeTracker.Entries<IAggregate>()
+           .SelectMany(entry => entry.Entity.UncommittedEvents())
            .ToList();
 
         if (IsUserWaitingOnline())
         {
             AddDomainEventsToOfflineProcessingQueue(domainEvents);
-            return await base.SaveChangesAsync(cancellationToken);
+        }
+        else
+        {
+            await PublishDomainEvents(domainEvents);
         }
 
-        await PublishDomainEvents(domainEvents);
-        return await base.SaveChangesAsync(cancellationToken);
+        var result = await base.SaveChangesAsync(cancellationToken);
+        foreach (var entry in ChangeTracker.Entries<IAggregate>())
+        {
+            entry.Entity.AcceptChanges();
+        }
+
+        return result;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

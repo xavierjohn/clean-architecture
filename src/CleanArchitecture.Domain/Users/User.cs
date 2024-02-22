@@ -1,4 +1,3 @@
-using CleanArchitecture.Domain.Common;
 using CleanArchitecture.Domain.Reminders;
 using CleanArchitecture.Domain.Subscriptions;
 using CleanArchitecture.Domain.Users.Events;
@@ -7,7 +6,7 @@ using Throw;
 
 namespace CleanArchitecture.Domain.Users;
 
-public class User : Entity
+public class User : Aggregate<UserId>
 {
     private readonly Calendar _calendar = null!;
 
@@ -24,7 +23,7 @@ public class User : Entity
     public string LastName { get; } = null!;
 
     public User(
-        Guid id,
+        UserId id,
         string firstName,
         string lastName,
         string email,
@@ -57,7 +56,7 @@ public class User : Entity
 
         _reminderIds.Add(reminder.Id);
 
-        _domainEvents.Add(new ReminderSetEvent(reminder));
+        DomainEvents.Add(new ReminderSetEvent(reminder));
 
         return Result.Success();
     }
@@ -81,7 +80,7 @@ public class User : Entity
 
         _dismissedReminderIds.Add(reminderId);
 
-        _domainEvents.Add(new ReminderDismissedEvent(reminderId));
+        DomainEvents.Add(new ReminderDismissedEvent(reminderId));
 
         return Result.Success();
     }
@@ -95,7 +94,7 @@ public class User : Entity
 
         Subscription = Subscription.Canceled;
 
-        _domainEvents.Add(new SubscriptionCanceledEvent(this, subscriptionId));
+        DomainEvents.Add(new SubscriptionCanceledEvent(this, subscriptionId));
 
         return Result.Success();
     }
@@ -116,14 +115,14 @@ public class User : Entity
 
         _calendar.DecrementEventCount(reminder.Date);
 
-        _domainEvents.Add(new ReminderDeletedEvent(reminder.Id));
+        DomainEvents.Add(new ReminderDeletedEvent(reminder.Id));
 
         return Result.Success();
     }
 
     public void DeleteAllReminders()
     {
-        _reminderIds.ForEach(reminderId => _domainEvents.Add(new ReminderDeletedEvent(reminderId)));
+        _reminderIds.ForEach(reminderId => DomainEvents.Add(new ReminderDeletedEvent(reminderId)));
 
         _reminderIds.Clear();
     }
@@ -137,6 +136,7 @@ public class User : Entity
     }
 
     private User()
+        : base(UserId.NewUnique())
     {
     }
 }

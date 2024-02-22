@@ -12,7 +12,7 @@ public class GetReminderQueryHandler(IRemindersRepository _remindersRepository)
     {
         var reminder = await _remindersRepository.GetByIdAsync(query.ReminderId, cancellationToken);
 
-        if (reminder?.UserId != query.UserId)
+        if (reminder is null || reminder.UserId != query.UserId)
         {
             return Error.NotFound("Reminder not found");
         }
