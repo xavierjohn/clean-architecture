@@ -43,6 +43,27 @@ public class AppDbContext(DbContextOptions options, IHttpContextAccessor _httpCo
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
+        modelBuilder
+        .Entity<Reminder>()
+        .Property(e => e.Id)
+        .HasConversion(
+            v => v.ToString(),
+            v => ReminderId.TryCreate(v).Value);
+
+        modelBuilder
+        .Entity<Reminder>()
+        .Property(e => e.UserId)
+        .HasConversion(
+            v => v.ToString(),
+            v => UserId.TryCreate(v).Value);
+
+        modelBuilder
+        .Entity<User>()
+        .Property(e => e.Id)
+        .HasConversion(
+            v => v.ToString(),
+            v => UserId.TryCreate(v).Value);
+
         base.OnModelCreating(modelBuilder);
     }
 

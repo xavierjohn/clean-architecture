@@ -1,4 +1,5 @@
 using CleanArchitecture.Application.Common.Interfaces;
+using CleanArchitecture.Domain.Users;
 
 using MediatR;
 
@@ -8,9 +9,9 @@ public class DismissReminderCommandHandler(
     IUsersRepository _usersRepository)
         : IRequestHandler<DismissReminderCommand, Result<FunctionalDdd.Unit>>
 {
-    public async Task<Result<FunctionalDdd.Unit>> Handle(DismissReminderCommand request, CancellationToken cancellationToken) =>
-        await _usersRepository.GetByIdAsync(request.UserId, cancellationToken)
-            .ToResultAsync(Error.NotFound("Reminder not found"))
+    public async Task<Result<FunctionalDdd.Unit>> Handle(DismissReminderCommand request, CancellationToken cancellationToken)
+        => await UserId.TryCreate(request.UserId)
+            .BindAsync(userId => _usersRepository.GetByIdAsync(userId, cancellationToken).ToResultAsync(Error.NotFound("Reminder not found.")))
             .BindAsync(user => user.DismissReminder(request.ReminderId).Map(r => user))
             .BindAsync(user =>
             {
