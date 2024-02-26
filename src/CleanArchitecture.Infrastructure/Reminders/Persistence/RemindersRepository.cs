@@ -11,7 +11,7 @@ public class RemindersRepository(AppDbContext _dbContext) : IRemindersRepository
     public async Task AddAsync(Reminder reminder, CancellationToken cancellationToken)
     {
         await _dbContext.AddAsync(reminder, cancellationToken);
-        var count = await _dbContext.SaveChangesAsync(cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<Reminder?> GetByIdAsync(ReminderId reminderId, CancellationToken cancellationToken)

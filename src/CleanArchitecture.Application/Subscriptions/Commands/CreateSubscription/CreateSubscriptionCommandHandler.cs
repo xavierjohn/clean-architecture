@@ -26,7 +26,7 @@ public class CreateSubscriptionCommandHandler(
         var subscription = new Subscription(request.SubscriptionType);
 
         var user = new User(
-            UserId.TryCreate(request.UserId).Value,
+            rUserId.Value,
             request.FirstName,
             request.LastName,
             request.Email,

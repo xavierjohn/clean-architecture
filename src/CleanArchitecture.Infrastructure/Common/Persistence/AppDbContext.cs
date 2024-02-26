@@ -32,14 +32,11 @@ public class AppDbContext(DbContextOptions options, IHttpContextAccessor _httpCo
         if (IsUserWaitingOnline())
         {
             AddDomainEventsToOfflineProcessingQueue(domainEvents);
-        }
-        else
-        {
-            await PublishDomainEvents(domainEvents);
+            return await base.SaveChangesAsync(cancellationToken);
         }
 
-        var result = await base.SaveChangesAsync(cancellationToken);
-        return result;
+        await PublishDomainEvents(domainEvents);
+        return await base.SaveChangesAsync(cancellationToken);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
