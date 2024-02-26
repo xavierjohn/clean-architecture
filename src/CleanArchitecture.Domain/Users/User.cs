@@ -10,9 +10,9 @@ public class User : Aggregate<UserId>
 {
     private readonly Calendar _calendar = null!;
 
-    private readonly List<Guid> _reminderIds = [];
+    private readonly List<ReminderId> _reminderIds = [];
 
-    private readonly List<Guid> _dismissedReminderIds = [];
+    private readonly List<ReminderId> _dismissedReminderIds = [];
 
     public Subscription Subscription { get; private set; } = null!;
 
@@ -61,7 +61,7 @@ public class User : Aggregate<UserId>
         return Result.Success();
     }
 
-    public Result<Unit> DismissReminder(Guid reminderId)
+    public Result<Unit> DismissReminder(ReminderId reminderId)
     {
         if (Subscription == Subscription.Canceled)
         {

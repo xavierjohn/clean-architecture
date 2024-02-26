@@ -1,6 +1,9 @@
+using CleanArchitecture.Application;
 using CleanArchitecture.Domain.Reminders;
 using CleanArchitecture.Domain.Users;
 using CleanArchitecture.Infrastructure.Common.Middleware;
+
+using FunctionalDdd;
 
 using MediatR;
 
@@ -21,6 +24,11 @@ public class AppDbContext(DbContextOptions options, IHttpContextAccessor _httpCo
            .SelectMany(entry => entry.Entity.UncommittedEvents())
            .ToList();
 
+        foreach (var entry in ChangeTracker.Entries<IAggregate>())
+        {
+            entry.Entity.AcceptChanges();
+        }
+
         if (IsUserWaitingOnline())
         {
             AddDomainEventsToOfflineProcessingQueue(domainEvents);
@@ -31,11 +39,6 @@ public class AppDbContext(DbContextOptions options, IHttpContextAccessor _httpCo
         }
 
         var result = await base.SaveChangesAsync(cancellationToken);
-        foreach (var entry in ChangeTracker.Entries<IAggregate>())
-        {
-            entry.Entity.AcceptChanges();
-        }
-
         return result;
     }
 
@@ -73,7 +76,8 @@ public class AppDbContext(DbContextOptions options, IHttpContextAccessor _httpCo
     {
         foreach (var domainEvent in domainEvents)
         {
-            await _publisher.Publish(domainEvent);
+            var @event = GetNotificationEvent(domainEvent);
+            await _publisher.Publish(@event);
         }
     }
 
@@ -86,5 +90,16 @@ public class AppDbContext(DbContextOptions options, IHttpContextAccessor _httpCo
 
         domainEvents.ForEach(domainEventsQueue.Enqueue);
         _httpContextAccessor.HttpContext.Items[EventualConsistencyMiddleware.DomainEventsKey] = domainEventsQueue;
+    }
+
+    private INotification GetNotificationEvent(IDomainEvent @event)
+    {
+        var eventType = @event.GetType();
+
+        var notification =
+            Activator.CreateInstance(typeof(DomainEventNotification<>).MakeGenericType(eventType), @event) as
+                INotification;
+
+        return notification!;
     }
 }

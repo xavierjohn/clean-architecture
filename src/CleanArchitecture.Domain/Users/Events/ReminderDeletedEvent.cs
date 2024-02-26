@@ -1,3 +1,5 @@
+using CleanArchitecture.Domain.Reminders;
+
 namespace CleanArchitecture.Domain.Users.Events;
 
-public record ReminderDeletedEvent(Guid ReminderId) : IDomainEvent;
+public record ReminderDeletedEvent(ReminderId ReminderId) : IDomainEvent;
