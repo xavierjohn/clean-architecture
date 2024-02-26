@@ -6,7 +6,7 @@
   <ItemGroup>
     <!-- Functional DDD -->
     <PackageVersion Include="FunctionalDdd.Asp" Version="$(FunctionalDddVersion)" />
-    <PackageVersion Include="FunctionalDdd.CommonValueObjectGenerator" Version="2.0.0-alpha.17" />
+    <PackageVersion Include="FunctionalDdd.CommonValueObjectGenerator" Version="$(FunctionalDddVersion)" />
     <PackageVersion Include="FunctionalDdd.CommonValueObjects" Version="$(FunctionalDddVersion)" />
     <PackageVersion Include="FunctionalDdd.DomainDrivenDesign" Version="$(FunctionalDddVersion)" />
     <PackageVersion Include="FunctionalDdd.FluentValidation" Version="$(FunctionalDddVersion)" />
